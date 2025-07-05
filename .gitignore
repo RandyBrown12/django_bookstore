@@ -1,0 +1,7 @@
+.idea/
+.venv/
+psql_info.json
+node_modules/
+Notes.txt
+*/__pycache__/
+django_bookstore_app/migrations/
