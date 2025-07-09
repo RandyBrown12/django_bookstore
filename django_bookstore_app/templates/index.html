@@ -1,12 +1,36 @@
 {% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
 <!DOCTYPE html>
 <html>
 <head>
     <title>Online Bookstore</title>
     <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/app.js' %}"></script>
 </head>
 <body>
-    <h1 class="text-lg text-center mt-3">Select From Books: </h1>
-    
+    <nav class="navbar sticky-top navbar-expand-lg navbar-white bg-primary">
+        <div class="d-flex justify-content-between justify-center items-center w-100 px-3">
+            <h1 class="navbar-brand text-center m-0">Online Bookstore</h1>
+            <img class="navbar-brand border-x-[2px]" src="{% static 'img/shopping-cart.png' %}" alt="Cart Icon" width="30" height="32" onclick="window.alert('Hello World!')">
+        </div>
+    </nav>
+    <div class="ml-[15px] grid grid-cols-3 gap-2" style="grid-auto-rows: 900px;">
+    {% for book in books %}
+        <div class="border border-black flex flex-col items-center justify-center">
+            <p> {{book.title}} by {{book.authors}}
+            <p> Publishers: {{book.publishers}} </p>
+            <img src="data:image/jpeg;base64,{{ book.image }}" class="w-[60%] h-[60%] object-cover border border-black" alt="Image">
+            <p> Description: {{book.description}} </p>
+            <p> Category: {{book.category}} </p>
+            <p> Language: {{book.language}} </p>
+            <p> Page Count: {{book.page_count}} </p>
+            <p> In Stock: {{book.book_count}} </p>
+            <p> Price ${{book.price}} </p>
+            <button class="border"> Order This Book </button>
+        </div>
+    {% endfor %}
+    <div>
 </body>
 </html>
