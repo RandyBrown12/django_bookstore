@@ -59,3 +59,22 @@ CREATE TABLE IF NOT EXISTS ORDER_BOOKS(
     QUANTITY INT
 );
 
+CREATE VIEW BOOK_INFORMATION AS
+SELECT
+    b.book_id AS ID,
+    b.title AS TITLE, 
+    b.category AS CATEGORY, 
+    b.language AS LANGUAGE, 
+    b.page_count AS PAGE_COUNT, 
+    b.description AS DESCRIPTION, 
+    b.book_count AS BOOK_COUNT,
+    b.price AS PRICE,
+    b.image AS IMAGE,
+    STRING_AGG(DISTINCT(a.author_first_name || ' ' || a.author_last_name), ', ') AS authors,
+    STRING_AGG(DISTINCT publishers.publisher, ', ') AS publishers
+FROM books b
+JOIN book_to_author ba ON b.book_id = ba.book_id
+JOIN authors a ON ba.author_id = a.author_id
+JOIN book_to_publisher ON b.book_id = book_to_publisher.book_id
+JOIN publishers ON book_to_publisher.publisher_id = publishers.publisher_id
+GROUP BY b.book_id;
