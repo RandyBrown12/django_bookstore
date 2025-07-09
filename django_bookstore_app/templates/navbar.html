@@ -1,0 +1,19 @@
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<head>
+    <title>Online Bookstore</title>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/app.js' %}"></script>
+</head>
+<nav class="navbar sticky-top navbar-expand-lg navbar-white bg-primary">
+    <div class="d-flex justify-content-between justify-center items-center w-100 px-3">
+        <a href="/books">
+            <h1 class="navbar-brand text-center m-0">Online Bookstore</h1>
+        </a>
+        <a href="/order">
+            <img class="navbar-brand border-x-[2px]" src="{% static 'img/shopping-cart.png' %}" alt="Cart Icon" width="30" height="32">
+        </a>
+    </div>
+</nav>

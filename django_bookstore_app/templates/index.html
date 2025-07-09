@@ -10,12 +10,7 @@
     <script src="{% static 'js/app.js' %}"></script>
 </head>
 <body>
-    <nav class="navbar sticky-top navbar-expand-lg navbar-white bg-primary">
-        <div class="d-flex justify-content-between justify-center items-center w-100 px-3">
-            <h1 class="navbar-brand text-center m-0">Online Bookstore</h1>
-            <img class="navbar-brand border-x-[2px]" src="{% static 'img/shopping-cart.png' %}" alt="Cart Icon" width="30" height="32" onclick="window.alert('Hello World!')">
-        </div>
-    </nav>
+    {% include 'navbar.html' %}
     <div class="ml-[15px] grid grid-cols-3 gap-2" style="grid-auto-rows: 900px;">
     {% for book in books %}
         <div class="border border-black flex flex-col items-center justify-center">

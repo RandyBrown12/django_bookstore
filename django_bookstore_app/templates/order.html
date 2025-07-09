@@ -1,0 +1,16 @@
+{% load static %}
+{% load django_bootstrap5 %}
+{% bootstrap_css %}
+{% bootstrap_javascript %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Online Bookstore</title>
+    <link href="{% static 'css/dist/styles.css' %}" rel="stylesheet" />
+    <script src="{% static 'js/app.js' %}"></script>
+</head>
+<body>
+    {% include 'navbar.html' %}
+    <p> Order Summary: </p>
+</body>
+</html>

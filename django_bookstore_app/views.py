@@ -21,6 +21,13 @@ def books_view(request):
 
     return render(request, 'index.html', {'books': books})
 
+@login_required
+def order_view(request):
+    """
+    Render the order page, displaying a list of books available for order.
+    """
+    return render(request, 'order.html')
+
 def logout_view(request):
     """
     Handle user logout.
