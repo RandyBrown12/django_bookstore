@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_bookstore_app',
     'tailwind',
-    'theme'
+    'theme',
+    'django_bootstrap5'
 ]
 
 MIDDLEWARE = [
