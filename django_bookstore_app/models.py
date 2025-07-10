@@ -126,6 +126,17 @@ class Books(models.Model):
         db_table = 'books'
 
 
+class CartInformation(models.Model):
+    cart_information_id = models.AutoField(primary_key=True)
+    customer_id = models.CharField()
+    book_id = models.CharField()
+    quantity = models.IntegerField()
+
+    class Meta:
+        managed = False
+        db_table = 'cart_information'
+
+
 class Customers(models.Model):
     customer_id = models.AutoField(primary_key=True)
     username = models.CharField(max_length=100)
@@ -202,6 +213,51 @@ class Orders(models.Model):
     class Meta:
         managed = False
         db_table = 'orders'
+
+
+class PgbenchAccounts(models.Model):
+    aid = models.IntegerField(primary_key=True)
+    bid = models.IntegerField(blank=True, null=True)
+    abalance = models.IntegerField(blank=True, null=True)
+    filler = models.CharField(max_length=84, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'pgbench_accounts'
+
+
+class PgbenchBranches(models.Model):
+    bid = models.IntegerField(primary_key=True)
+    bbalance = models.IntegerField(blank=True, null=True)
+    filler = models.CharField(max_length=88, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'pgbench_branches'
+
+
+class PgbenchHistory(models.Model):
+    tid = models.IntegerField(blank=True, null=True)
+    bid = models.IntegerField(blank=True, null=True)
+    aid = models.IntegerField(blank=True, null=True)
+    delta = models.IntegerField(blank=True, null=True)
+    mtime = models.DateTimeField(blank=True, null=True)
+    filler = models.CharField(max_length=22, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'pgbench_history'
+
+
+class PgbenchTellers(models.Model):
+    tid = models.IntegerField(primary_key=True)
+    bid = models.IntegerField(blank=True, null=True)
+    tbalance = models.IntegerField(blank=True, null=True)
+    filler = models.CharField(max_length=84, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'pgbench_tellers'
 
 
 class Publishers(models.Model):
