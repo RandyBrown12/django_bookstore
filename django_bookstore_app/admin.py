@@ -1,9 +1,8 @@
 from django.contrib import admin
-from .models import Books, Customers, Orders, OrderBooks, Publishers, Authors, BookToAuthor, BookToPublisher, BookInformation, CartInformation
+from .models import Books, Orders, OrderBooks, Publishers, Authors, BookToAuthor, BookToPublisher, BookInformation, CartInformation
 # Register your models here.
 
 admin.site.register(Books)
-admin.site.register(Customers)
 admin.site.register(Orders)
 admin.site.register(OrderBooks)
 admin.site.register(Publishers)

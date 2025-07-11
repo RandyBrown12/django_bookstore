@@ -194,7 +194,7 @@ class OrderBooks(models.Model):
 
 class Orders(models.Model):
     order_id = models.AutoField(primary_key=True)
-    customer = models.ForeignKey(Customers, models.DO_NOTHING, blank=True, null=True)
+    customer = models.ForeignKey(AuthUser, models.DO_NOTHING, blank=True, null=True)
     order_date = models.DateField(blank=True, null=True)
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
