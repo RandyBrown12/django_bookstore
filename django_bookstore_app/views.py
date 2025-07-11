@@ -1,10 +1,11 @@
 import base64
+from datetime import date
 from django.views.decorators.http import require_POST
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django_bookstore_app.models import BookInformation, CartInformation
+from django_bookstore_app.models import BookInformation, CartInformation, OrderBooks, Orders
 from django.http import HttpResponse
 
 # Create your views here.
@@ -58,6 +59,48 @@ def add_to_cart_API(request):
         return HttpResponse(f"Error adding item {book_id} to cart: {str(e)}", status=500)
 
     return HttpResponse("OK")
+
+@require_POST
+@login_required
+def place_order_API(request):
+    """
+    Handle placing an order for the items in the cart.
+    """
+    try:
+        user_id = request.user.id
+        cart_items = CartInformation.objects.filter(customer_id=user_id)
+        total_price = 0
+
+        if not cart_items:
+            return HttpResponse("No items in cart", status=400)
+
+        for item in cart_items:
+            book = BookInformation.objects.get(id=item.book_id)
+            total_price += book.price * item.quantity
+        
+        order = Orders.objects.create(
+            customer_id=user_id,
+            order_date=date.today(),
+            total_price=total_price
+        )
+
+        for item in cart_items:
+            book = BookInformation.objects.get(id=item.book_id)
+            order_book = OrderBooks.objects.create(
+                order_id=order.order_id,
+                book_id=book.id,
+                quantity=item.quantity
+            )
+
+            cart_item = CartInformation.objects.get(customer_id=user_id, book_id=item.book_id)
+            cart_item.delete()
+
+        return HttpResponse("Order placed successfully")
+
+    except Exception as e:
+        print(str(e))
+        return HttpResponse(f"Error placing order: {str(e)}", status=500)
+
 
 @login_required
 def order_view(request):

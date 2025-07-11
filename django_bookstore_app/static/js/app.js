@@ -15,6 +15,24 @@ async function addToCart(book_id) {
     }
 }
 
+async function placeOrder() {
+    const response = await fetch("/place_order/", {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookieValue('csrftoken')
+        }
+    })
+    
+    if (response.status == 200) {
+        window.alert("Order has been placed!!!")
+    } else {
+        window.alert(`Error: ${response.json()}`)
+    }
+    
+    window.href = "/books"
+}
+
 function getCookieValue(name) {
     const cookies = document.cookie.split(';');
     for (let cookie of cookies) {

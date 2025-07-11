@@ -11,7 +11,7 @@
 </head>
 <body>
     {% include 'navbar.html' %}
-    <p class="text-center mt-3"> Order Summary: </p>
+    <p class="text-center mt-3"> Order Summary: </p> 
     {% for cart_item in cart_items %}
         <div class="border border-black flex flex-col items-center justify-center mx-[25%]">
             <p> {{cart_item.title}} by {{ cart_item.authors }} </p>
@@ -19,9 +19,9 @@
             <p> Qunatity: {{cart_item.quantity}} </p>
         </div>
     {% endfor %}
-    <p class="text-center"> Total Amount before taxes: ${{total_price}} </p>
+    <p class="text-center mt-2"> Total Amount before taxes: ${{total_price}} </p>
     <div class="flex items-center justify-center">
-        <button> Order Now!!! </button>
+        <button class="bg-emerald-500 px-2 border-3 rounded-full" onclick="placeOrder()"> Order Now!!! </button>
     </div>
 </body>
 </html>
