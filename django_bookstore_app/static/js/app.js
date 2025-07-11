@@ -11,7 +11,8 @@ async function addToCart(book_id) {
     if (response.status == 200) {
         window.alert("Item has been added!")
     } else {
-        window.alert(`Error: ${response.json()}`)
+        text = await response.text();
+        window.alert(`Error ${response.status}: ${text}`)
     }
 }
 
@@ -26,11 +27,13 @@ async function placeOrder() {
     
     if (response.status == 200) {
         window.alert("Order has been placed!!!")
+        window.href = "/books"
     } else {
-        window.alert(`Error: ${response.json()}`)
+        text = await response.text();
+        window.alert(`Error ${response.status}: ${text}`)
     }
     
-    window.href = "/books"
+    
 }
 
 function getCookieValue(name) {
