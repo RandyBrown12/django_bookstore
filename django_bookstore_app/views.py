@@ -64,7 +64,19 @@ def order_view(request):
     """
     Render the order page, displaying a list of books available for order.
     """
-    return render(request, 'order.html')
+    cart_items = CartInformation.objects.filter(customer_id=request.user.id)
+    total_price = 0
+    if cart_items:
+        for item in cart_items:
+            book = BookInformation.objects.get(id=item.book_id)
+            raw_bytes = bytes(book.image)
+            book.image = base64.b64encode(raw_bytes).decode('utf-8')
+            total_price += book.price * item.quantity
+            item.title = book.title
+            item.authors = book.authors
+            item.image = book.image
+
+    return render(request, 'order.html', {'cart_items': cart_items, 'total_price': total_price})
 
 def logout_view(request):
     """
