@@ -136,18 +136,6 @@ class CartInformation(models.Model):
         managed = False
         db_table = 'cart_information'
 
-
-class Customers(models.Model):
-    customer_id = models.AutoField(primary_key=True)
-    username = models.CharField(max_length=100)
-    email = models.CharField(max_length=100, blank=True, null=True)
-    password = models.CharField(max_length=36)
-
-    class Meta:
-        managed = False
-        db_table = 'customers'
-
-
 class DjangoAdminLog(models.Model):
     action_time = models.DateTimeField()
     object_id = models.TextField(blank=True, null=True)
@@ -208,7 +196,7 @@ class Orders(models.Model):
     order_id = models.AutoField(primary_key=True)
     customer = models.ForeignKey(Customers, models.DO_NOTHING, blank=True, null=True)
     order_date = models.DateField(blank=True, null=True)
-    amount_total = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
+    total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
         managed = False
