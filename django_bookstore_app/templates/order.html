@@ -11,6 +11,7 @@
 </head>
 <body>
     {% include 'navbar.html' %}
+    {% if cart_items %}
     <p class="text-center mt-3"> Order Summary: </p> 
     {% for cart_item in cart_items %}
         <div class="border border-black flex flex-col items-center justify-center mx-[25%]">
@@ -23,5 +24,8 @@
     <div class="flex items-center justify-center">
         <button class="bg-emerald-500 px-2 border-3 rounded-full" onclick="placeOrder()"> Order Now!!! </button>
     </div>
+    {% else %}
+        <p class="text-center mt-3"> No items have been added! </p>
+    {% endif %}
 </body>
 </html>
