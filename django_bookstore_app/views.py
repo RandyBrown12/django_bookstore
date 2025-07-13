@@ -99,7 +99,8 @@ def place_order_API(request):
 
     except Exception as e:
         print(str(e))
-        return HttpResponse(f"Error placing order: {str(e)}", status=500)
+        return HttpResponse("There was an error placing an order for the items in your cart.", status=500)
+
 
 
 @login_required

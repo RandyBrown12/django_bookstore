@@ -7,7 +7,8 @@ CREATE TABLE IF NOT EXISTS BOOKS(
     DESCRIPTION TEXT NOT NULL,
     BOOK_COUNT INT NOT NULL,
     PRICE DECIMAL(10, 2) NOT NULL,
-    IMAGE BYTEA NOT NULL
+    IMAGE BYTEA NOT NULL,
+    CHECK(BOOK_COUNT >= 0)
 );
 
 CREATE TABLE IF NOT EXISTS AUTHORS(
@@ -78,3 +79,25 @@ JOIN authors a ON ba.author_id = a.author_id
 JOIN book_to_publisher ON b.book_id = book_to_publisher.book_id
 JOIN publishers ON book_to_publisher.publisher_id = publishers.publisher_id
 GROUP BY b.book_id;
+
+CREATE OR REPLACE FUNCTION update_book_stock_information()
+RETURNS TRIGGER AS $$
+DECLARE
+    incoming_count INTEGER;
+    stock_count INTEGER;
+BEGIN
+    SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID = NEW.BOOK_ID;
+    SELECT QUANTITY INTO incoming_count FROM ORDER_BOOKS WHERE ORDER_BOOKS_ID = NEW.ORDER_BOOKS_ID;
+    IF stock_count - incoming_count < 0 THEN
+        RAISE EXCEPTION 'Value is negative: %', stock_count - incoming_count;
+    ELSE
+        UPDATE BOOKS SET BOOK_COUNT = stock_count - incoming_count WHERE BOOK_ID = NEW.BOOK_ID;
+        RETURN NEW;
+    END IF;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER UPDATE_BOOK_STOCK_INFORMATION_TRIGGER 
+AFTER INSERT ON ORDER_BOOKS
+FOR EACH ROW
+EXECUTE FUNCTION update_book_stock_information()
