@@ -15,7 +15,7 @@ def books_view(request):
     Render the books page, displaying a list of books.
     """    
     # Fetch books from the database (assuming a Books model exists)
-    books = BookInformation.objects.all()
+    books = BookInformation.objects.filter(book_count__gt=0)
 
     for book in books:
         # Convert binary image data to a displayable format if needed
