@@ -26,14 +26,12 @@ async function placeOrder() {
     })
     
     if (response.status == 200) {
-        window.alert("Order has been placed!!!")
-        window.href = "/books"
+        window.alert("Order has been placed!");
+        window.location.href = "/books/";
     } else {
         text = await response.text();
         window.alert(`Error ${response.status}: ${text}`)
     }
-    
-    
 }
 
 function getCookieValue(name) {
