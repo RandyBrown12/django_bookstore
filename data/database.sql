@@ -55,8 +55,8 @@ CREATE TABLE IF NOT EXISTS ORDER_BOOKS(
 
 CREATE TABLE IF NOT EXISTS CART_INFORMATION(
     CART_INFORMATION_ID SERIAL PRIMARY KEY,
-    CUSTOMER_ID VARCHAR NOT NULL REFERENCES AUTH_USER(ID),
-    BOOK_ID VARCHAR NOT NULL,
+    CUSTOMER_ID INT NOT NULL REFERENCES AUTH_USER(ID),
+    BOOK_ID INT NOT NULL,
     QUANTITY INT NOT NULL
 );
 
@@ -80,14 +80,13 @@ JOIN book_to_publisher ON b.book_id = book_to_publisher.book_id
 JOIN publishers ON book_to_publisher.publisher_id = publishers.publisher_id
 GROUP BY b.book_id;
 
-CREATE OR REPLACE FUNCTION update_book_stock_information()
+CREATE OR REPLACE FUNCTION update_book_stock_information() 
 RETURNS TRIGGER AS $$
 DECLARE
     incoming_count INTEGER;
     stock_count INTEGER;
 BEGIN
     SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID = NEW.BOOK_ID;
-    SELECT QUANTITY INTO incoming_count FROM ORDER_BOOKS WHERE ORDER_BOOKS_ID = NEW.ORDER_BOOKS_ID;
     IF stock_count - incoming_count < 0 THEN
         RAISE EXCEPTION 'Value is negative: %', stock_count - incoming_count;
     ELSE
@@ -100,4 +99,30 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER UPDATE_BOOK_STOCK_INFORMATION_TRIGGER 
 AFTER INSERT ON ORDER_BOOKS
 FOR EACH ROW
-EXECUTE FUNCTION update_book_stock_information()
+EXECUTE PROCEDURE update_book_stock_information();
+
+CREATE OR REPLACE FUNCTION check_cart_information()
+RETURNS TRIGGER AS $$
+DECLARE
+    stock_count INTEGER;
+    select_book_id_row RECORD;
+BEGIN
+    SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID = NEW.BOOK_ID;
+
+    FOR select_book_id_row IN 
+        SELECT CART_INFORMATION_ID, QUANTITY FROM CART_INFORMATION WHERE BOOK_ID = NEW.BOOK_ID
+    LOOP
+        IF stock_count - select_book_id_row.QUANTITY = 0 OR stock_count = 0 THEN
+            DELETE FROM CART_INFORMATION WHERE CART_INFORMATION_ID = select_book_id_row.CART_INFORMATION_ID;        
+        ELSIF stock_count - select_book_id_row.QUANTITY < 0 THEN
+            UPDATE CART_INFORMATION SET QUANTITY = stock_count WHERE CART_INFORMATION_ID = select_book_id_row.CART_INFORMATION_ID;
+        END IF;
+    END LOOP;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER CHECK_CART_INFORMATION_TRIGGER
+AFTER UPDATE ON BOOKS
+FOR EACH ROW 
+EXECUTE PROCEDURE check_cart_information()

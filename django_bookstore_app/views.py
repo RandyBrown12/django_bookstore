@@ -71,7 +71,7 @@ def place_order_API(request):
         cart_items = CartInformation.objects.filter(customer_id=user_id)
         total_price = 0
 
-        if not cart_items:
+        if not cart_items.exists():
             return HttpResponse("No items in cart", status=400)
 
         for item in cart_items:
@@ -92,8 +92,11 @@ def place_order_API(request):
                 quantity=item.quantity
             )
 
-            cart_item = CartInformation.objects.get(customer_id=user_id, book_id=item.book_id)
-            cart_item.delete()
+            # Grabs cart information and deletes it after placing the order
+
+            cart_item = CartInformation.objects.filter(customer_id=user_id, book_id=item.book_id)
+            if cart_item.exists():
+                cart_item.delete()
 
         return HttpResponse("Order placed successfully")
 
