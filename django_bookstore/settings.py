@@ -88,6 +88,10 @@ DATABASES = {
         'PASSWORD': psql_info.get('password', None),
         'HOST': psql_info.get('host', None),
         'PORT': psql_info.get('port', None),
+        'OPTIONS': {
+            'sslmode': psql_info.get('sslmode', 'prefer'),
+            'channel_binding': psql_info.get('channel_binding', 'prefer'),
+        }
     }
 }
 
