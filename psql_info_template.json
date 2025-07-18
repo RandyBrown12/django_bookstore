@@ -3,5 +3,7 @@
     "user": "",
     "password": "",
     "host": "",
-    "port": ""
+    "port": "",
+    "sslmode": "",
+    "channel_binding": ""
 }
