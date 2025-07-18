@@ -12,7 +12,7 @@ class AuthGroup(models.Model):
     name = models.CharField(unique=True, max_length=150)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_group'
 
 
@@ -22,7 +22,7 @@ class AuthGroupPermissions(models.Model):
     permission = models.ForeignKey('AuthPermission', models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_group_permissions'
         unique_together = (('group', 'permission'),)
 
@@ -33,7 +33,7 @@ class AuthPermission(models.Model):
     codename = models.CharField(max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_permission'
         unique_together = (('content_type', 'codename'),)
 
@@ -51,7 +51,7 @@ class AuthUser(models.Model):
     date_joined = models.DateTimeField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_user'
 
 
@@ -61,7 +61,7 @@ class AuthUserGroups(models.Model):
     group = models.ForeignKey(AuthGroup, models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_user_groups'
         unique_together = (('user', 'group'),)
 
@@ -72,7 +72,7 @@ class AuthUserUserPermissions(models.Model):
     permission = models.ForeignKey(AuthPermission, models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'auth_user_user_permissions'
         unique_together = (('user', 'permission'),)
 
@@ -83,7 +83,7 @@ class Authors(models.Model):
     author_last_name = models.TextField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'authors'
         unique_together = (('author_first_name', 'author_last_name'),)
 
@@ -94,7 +94,7 @@ class BookToAuthor(models.Model):
     author = models.ForeignKey(Authors, models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'book_to_author'
         unique_together = (('book', 'author'),)
 
@@ -105,7 +105,7 @@ class BookToPublisher(models.Model):
     publisher = models.ForeignKey('Publishers', models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'book_to_publisher'
         unique_together = (('book', 'publisher'),)
 
@@ -122,7 +122,7 @@ class Books(models.Model):
     image = models.BinaryField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'books'
 
 
@@ -133,7 +133,7 @@ class CartInformation(models.Model):
     quantity = models.IntegerField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'cart_information'
 
 class DjangoAdminLog(models.Model):
@@ -146,7 +146,7 @@ class DjangoAdminLog(models.Model):
     user = models.ForeignKey(AuthUser, models.DO_NOTHING)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'django_admin_log'
 
 
@@ -155,7 +155,7 @@ class DjangoContentType(models.Model):
     model = models.CharField(max_length=100)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'django_content_type'
         unique_together = (('app_label', 'model'),)
 
@@ -167,7 +167,7 @@ class DjangoMigrations(models.Model):
     applied = models.DateTimeField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'django_migrations'
 
 
@@ -177,7 +177,7 @@ class DjangoSession(models.Model):
     expire_date = models.DateTimeField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'django_session'
 
 
@@ -188,7 +188,7 @@ class OrderBooks(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'order_books'
 
 
@@ -199,7 +199,7 @@ class Orders(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'orders'
 
 
@@ -210,7 +210,7 @@ class PgbenchAccounts(models.Model):
     filler = models.CharField(max_length=84, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'pgbench_accounts'
 
 
@@ -220,7 +220,7 @@ class PgbenchBranches(models.Model):
     filler = models.CharField(max_length=88, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'pgbench_branches'
 
 
@@ -233,7 +233,7 @@ class PgbenchHistory(models.Model):
     filler = models.CharField(max_length=22, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'pgbench_history'
 
 
@@ -244,7 +244,7 @@ class PgbenchTellers(models.Model):
     filler = models.CharField(max_length=84, blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'pgbench_tellers'
 
 
@@ -254,7 +254,7 @@ class Publishers(models.Model):
     publisher_date = models.DateField()
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'publishers'
         unique_together = (('publisher_id', 'publisher'),)
 
@@ -272,5 +272,5 @@ class BookInformation(models.Model):
     publishers = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = True
+        managed = False
         db_table = 'book_information'
