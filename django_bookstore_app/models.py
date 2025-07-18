@@ -83,7 +83,7 @@ class Authors(models.Model):
     author_last_name = models.TextField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'authors'
         unique_together = (('author_first_name', 'author_last_name'),)
 
@@ -94,7 +94,7 @@ class BookToAuthor(models.Model):
     author = models.ForeignKey(Authors, models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'book_to_author'
         unique_together = (('book', 'author'),)
 
@@ -105,7 +105,7 @@ class BookToPublisher(models.Model):
     publisher = models.ForeignKey('Publishers', models.DO_NOTHING)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'book_to_publisher'
         unique_together = (('book', 'publisher'),)
 
@@ -122,7 +122,7 @@ class Books(models.Model):
     image = models.BinaryField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'books'
 
 
@@ -133,7 +133,7 @@ class CartInformation(models.Model):
     quantity = models.IntegerField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'cart_information'
 
 class DjangoAdminLog(models.Model):
@@ -188,7 +188,7 @@ class OrderBooks(models.Model):
     quantity = models.IntegerField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'order_books'
 
 
@@ -199,7 +199,7 @@ class Orders(models.Model):
     total_price = models.DecimalField(max_digits=10, decimal_places=2, blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'orders'
 
 
@@ -254,7 +254,7 @@ class Publishers(models.Model):
     publisher_date = models.DateField()
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'publishers'
         unique_together = (('publisher_id', 'publisher'),)
 
@@ -272,5 +272,5 @@ class BookInformation(models.Model):
     publishers = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'book_information'
