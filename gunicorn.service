@@ -1,0 +1,12 @@
+[Unit]
+Description=Gunicorn_Django_Online_Bookstore
+
+[Service]
+User=bitnami
+Restart=on-failure
+WorkingDirectory=<repo_directory>
+ExecStart=<gunicorn_path> --pid <repo_directory>/PID_FILE --bind unix:/tmp/gunicorn.sock --workers=1 --threads=25 django_bookstore.wsgi:application
+ExecStop=/usr/bin/kill $(cat <repo_directory>/PID_FILE)
+
+[Install]
+WantedBy=multi-user.target
