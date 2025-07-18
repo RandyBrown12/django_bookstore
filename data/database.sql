@@ -83,14 +83,16 @@ GROUP BY b.book_id;
 CREATE OR REPLACE FUNCTION update_book_stock_information() 
 RETURNS TRIGGER AS $$
 DECLARE
-    incoming_count INTEGER;
     stock_count INTEGER;
+    incoming_count INTEGER := NEW.QUANTITY;
+    incoming_book_id INTEGER := NEW.BOOK_ID;
 BEGIN
-    SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID = NEW.BOOK_ID;
+    SELECT book_count INTO stock_count FROM BOOKS WHERE BOOK_ID::INTEGER = incoming_book_id;
+
     IF stock_count - incoming_count < 0 THEN
         RAISE EXCEPTION 'Value is negative: %', stock_count - incoming_count;
     ELSE
-        UPDATE BOOKS SET BOOK_COUNT = stock_count - incoming_count WHERE BOOK_ID = NEW.BOOK_ID;
+        UPDATE BOOKS SET book_count = stock_count - incoming_count WHERE BOOK_ID::INTEGER = incoming_book_id;
         RETURN NEW;
     END IF;
 END;
@@ -99,7 +101,7 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER UPDATE_BOOK_STOCK_INFORMATION_TRIGGER 
 AFTER INSERT ON ORDER_BOOKS
 FOR EACH ROW
-EXECUTE PROCEDURE update_book_stock_information();
+EXECUTE FUNCTION update_book_stock_information();
 
 CREATE OR REPLACE FUNCTION check_cart_information()
 RETURNS TRIGGER AS $$
@@ -107,10 +109,10 @@ DECLARE
     stock_count INTEGER;
     select_book_id_row RECORD;
 BEGIN
-    SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID = NEW.BOOK_ID;
+    SELECT BOOK_COUNT INTO stock_count FROM BOOKS WHERE BOOK_ID::INTEGER = NEW.BOOK_ID;
 
     FOR select_book_id_row IN 
-        SELECT CART_INFORMATION_ID, QUANTITY FROM CART_INFORMATION WHERE BOOK_ID = NEW.BOOK_ID
+        SELECT CART_INFORMATION_ID, QUANTITY FROM CART_INFORMATION WHERE BOOK_ID::INTEGER = NEW.BOOK_ID
     LOOP
         IF stock_count - select_book_id_row.QUANTITY = 0 OR stock_count = 0 THEN
             DELETE FROM CART_INFORMATION WHERE CART_INFORMATION_ID = select_book_id_row.CART_INFORMATION_ID;        
@@ -125,4 +127,4 @@ $$ LANGUAGE plpgsql;
 CREATE TRIGGER CHECK_CART_INFORMATION_TRIGGER
 AFTER UPDATE ON BOOKS
 FOR EACH ROW 
-EXECUTE PROCEDURE check_cart_information()
+EXECUTE FUNCTION check_cart_information();
