@@ -22,15 +22,24 @@ You are now to ready to run the project.
   `py manage.py runserver`
 * For Deployment with Gunicorn:
 
-  > Before Deploying: 
+  > Before Deploying:
+  > 
   > Check and fix errors: `py manage.py check --deploy`
+  > 
   > Place gunicorn.service file in this repo to /etc/systemd/system
+  > 
   > Run gunicorn: `sudo systemctl enable gunicorn`
+  > 
   > Install nginx and place django_bookstore_reverse_proxy.conf to /etc/nginx/sites-available
-  > In /etc/nginx/sites-enabled, perform a link to the place django_bookstore_reverse_proxy.conf and also delete the link pointing to default. 
+  > 
+  > In /etc/nginx/sites-enabled, perform a link to the place django_bookstore_reverse_proxy.conf and also delete the link pointing to default.
+  > 
   > Ex: `sudo ln -s /etc/nginx/sites-available/django-bookstore-reverse-proxy.conf /etc/nginx/sites-enabled/`
+  > 
   > Install certbot to perform HTTPS
+  > 
   > `sudo apt install certbot python3-certbot-nginx`
+  > 
   > `sudo certbot --nginx`
 
   1. Update settings.py in django_bookstore
@@ -57,5 +66,6 @@ You are now to ready to run the project.
 You are now ready to use the project.
 
 ### URLs
-Login: ```https:<domain_name>/login/```
-Sign Up: ```https:<domain_name>/signup/```
+Login: `https:<domain_name>/login/`
+
+Sign Up: `https:<domain_name>/signup/`
