@@ -57,5 +57,5 @@ You are now to ready to run the project.
 You are now ready to use the project.
 
 ### URLs
-Login: `https:<domain_name>/login/`
-Sign Up: `https:<domain_name>/signup/`
+Login: ```https:<domain_name>/login/```
+Sign Up: ```https:<domain_name>/signup/```
