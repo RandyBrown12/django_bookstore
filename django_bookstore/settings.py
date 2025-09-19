@@ -114,12 +114,16 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+# Convert an HTTP to HTTPS. Uncomment to do that
+"""
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = True
 SECURE_HSTS_INCLUDE_SUBDOMAINS = True
 SECURE_HSTS_SECONDS = 31536000
 SECURE_HSTS_PRELOAD = True
+"""
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
