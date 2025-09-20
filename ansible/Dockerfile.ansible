@@ -1,0 +1,14 @@
+FROM alpine/ansible:latest
+
+COPY inventory.ini /ansible/
+
+COPY playbook.yml /ansible/
+
+COPY psql_info.json /ansible/
+
+COPY id_ed25519 /root/.ssh/authorized_keys
+
+RUN chmod 600 /root/.ssh/authorized_keys && \
+    chmod 700 /root/.ssh
+
+ENTRYPOINT ["sleep", "infinity"]

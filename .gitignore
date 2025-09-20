@@ -6,3 +6,5 @@ Notes.txt
 */__pycache__/
 django_bookstore_app/migrations/
 .vscode/
+
+ansible/id_ed25519*

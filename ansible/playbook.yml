@@ -1,0 +1,155 @@
+- hosts: debian_db
+  tasks:
+    - name: Update apt cache before installing
+      ansible.builtin.apt:
+        update_cache: yes
+    - name: Install Postgres-15
+      ansible.builtin.apt:
+        name: postgresql-15
+        state: latest
+    - name: Install Postgres-Client-15
+      ansible.builtin.apt:
+        name: postgresql-client-15
+        state: latest
+    - name: Install Psycopg2
+      ansible.builtin.apt:
+        name: python3-psycopg2
+        state: present
+    - name: Check for postgresql.conf
+      ansible.builtin.stat:
+        path: /var/lib/postgresql/15/main/postgresql.conf
+      register: postgresql_conf
+    - name: Remove main directory if postgresql.conf does not exist
+      ansible.builtin.file:
+        path: /var/lib/postgresql/15/main
+        state: absent
+      become: yes
+      become_user: postgres
+      become_method: su
+      when: not postgresql_conf.stat.exists
+    - name: Initialize PostgreSQL cluster
+      ansible.builtin.command: /usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/15/main
+      become: yes
+      become_user: postgres
+      become_method: su
+      args:
+        creates: /var/lib/postgresql/15/main/postgresql.conf
+    - name: Allow listen_address to listen to all address in PostgreSQL
+      ansible.builtin.lineinfile:
+        path: /var/lib/postgresql/15/main/postgresql.conf
+        regexp: '^#?listen_addresses\s*=\s*''localhost'''
+        line: 'listen_addresses = ''*'''
+      become: yes
+    - name: Allow port 5432 to be run
+      ansible.builtin.lineinfile:
+        path: /var/lib/postgresql/15/main/postgresql.conf
+        regexp: '^#?port\s*=\s*5432'
+        line: 'port = 5432'
+      become: yes
+    - name: Allow connections outside of container to access it
+      community.postgresql.postgresql_pg_hba:
+        dest: /var/lib/postgresql/15/main/pg_hba.conf
+        contype: host
+        databases: debian_db
+        users: randy
+        address: 0.0.0.0/0
+        method: scram-sha-256
+      become: yes
+    - name: Start up PostgreSQL cluster
+      ansible.builtin.command: /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/15/main -l /var/lib/postgresql/15/logfile start
+      become: yes
+      become_user: postgres
+      become_method: su
+      args:
+        creates: /var/lib/postgresql/15/main/postmaster.pid
+    - name: Create a PostgreSQL user
+      community.postgresql.postgresql_user:
+        name: randy
+        password: HelloWorld2!
+        role_attr_flags: CREATEDB
+        login_user: postgres
+    - name: Create different Database
+      community.postgresql.postgresql_db:
+        name: debian_db
+        owner: randy
+        state: present
+        login_user: postgres
+        login_password: ""
+- hosts: ubuntu_django_server
+  tasks:
+    - name: Update apt cache before installing
+      ansible.builtin.apt:
+        update_cache: yes
+    - name: Install Git for ubuntu
+      ansible.builtin.apt:
+        name: git
+        state: latest
+    - name: Install Python for ubuntu.
+      ansible.builtin.apt:
+        name: python3
+        state: latest
+    - name: Install pip for ubuntu.
+      ansible.builtin.apt:
+        name: python3-pip
+        state: latest
+    - name: Install libpq-dev (for pg_config) for ubuntu.
+      ansible.builtin.apt:
+        name: libpq-dev
+        state: latest
+    - name: Use pip to install uv
+      ansible.builtin.shell: pip install uv
+    - name: Install psycopg2
+      ansible.builtin.pip:
+        name: psycopg2-binary
+    - name: Git checkout Provider Lookup
+      ansible.builtin.git:
+        repo: 'https://github.com/RandyBrown12/django_bookstore'
+        dest: /home/root
+        update: no
+    - name: Perform an environment check
+      ansible.builtin.stat:
+        path: /home/root/.venv/bin/activate
+      register: venv_activate_file
+    - name: Create venv
+      ansible.builtin.command: uv venv .venv
+      when: not venv_activate_file.stat.exists
+      args:
+        chdir: /home/root
+    - name: Install required packages
+      ansible.builtin.shell: |
+        source .venv/bin/activate
+        uv pip install -r requirements.txt
+      args:
+        chdir: /home/root
+    - name: Copy psql_info.json to container
+      ansible.builtin.copy:
+        src: /ansible/psql_info.json
+        dest: /home/root/
+    - name: Add Allowed_Hosts requirement for Django
+      ansible.builtin.lineinfile:
+        path: /home/root/django_bookstore/settings.py
+        regexp: '^ALLOWED_HOSTS\s*=\s*\[\]'
+        line: 'ALLOWED_HOSTS = [''*'']'
+      become: yes
+    - name: Make Migrations from Django
+      ansible.builtin.command: 
+        .venv/bin/python3 manage.py migrate
+      args:
+        chdir: /home/root/
+    - name: Create SQL Tables
+      community.postgresql.postgresql_script:
+        login_db: debian_db
+        login_user: randy
+        login_password: HelloWorld2!
+        login_host: debian_db
+        path: /home/root/data/database.sql
+    - name: Run loading_script.py
+      ansible.builtin.command:
+        .venv/bin/python3 data/loading_script.py
+      args:
+        chdir: /home/root/
+    - name: Run Django in the background
+      ansible.builtin.shell: |
+        nohup .venv/bin/python3 manage.py runserver 0.0.0.0:8000 > /var/log/django_server.log 2>&1 &
+      args:
+        chdir: /home/root/

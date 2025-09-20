@@ -1,0 +1,14 @@
+services:
+  ubuntu_django_server:
+    build: 
+      dockerfile: ./Dockerfile.ubuntu
+    ports:
+      - "20000:8000"
+  debian_db:
+    build: 
+      dockerfile: ./Dockerfile.debian
+    ports:
+      - "10000:5432"
+  ansible-control:
+    build:
+      dockerfile: ./Dockerfile.ansible
