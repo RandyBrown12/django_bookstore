@@ -76,29 +76,27 @@ Prerequisites: Docker, ssh-keygen (Windows 10 & Later includes OpenSSH)
 
 1. Change directory to the ansible folder:
    `cd ansible`
-
 2. Add a psql_info.json in the django_bookstore directory and put it into this directory.
    `cp ../psql_info.json .`
-
-3. Create a ssh-keygen into the ansible directory.
+3. Change database, user, hostname, password in psql_info.json to debian_db
+   ```json { "database": "debian_db", "user": "randy", ,"host": "debian_db", "password": "HelloWorld2!", ... }```
+4. Create a ssh-keygen into the ansible directory.
    `ssh-keygen -t ed22519 -C "<email_here>"`
-
-4. Start the containers in the background using Docker Compose:
+5. Start the containers in the background using Docker Compose:
    `docker compose up --build -d`
 
 > Note: You can stop containers using `docker compose down`
 
-4. Access the ansible-control container in exec mode for the next two commands:
+6. Access the ansible-control container in exec mode for the next two commands:
    `docker compose exec -it ansible-control /bin/bash`
-
-5. Initialize SSH fingerprints by running a ping test (this will prompt you to accept SSH keys for the other containers):
+7. Initialize SSH fingerprints by running a ping test (this will prompt you to accept SSH keys for the other containers):
    `ansible all -m ping -i /ansible/inventory.ini --private-key=~/.ssh/authorized_keys`
+
 > Note: It will ask if you want to continue connecting, type `yes`. Type `yes` again for the other container.
 
-6. Run the Ansible playbook to configure the environment:
+8. Run the Ansible playbook to configure the environment:
    `ansible-playbook -i /ansible/inventory.ini /ansible/playbook.yml --private-key=~/.ssh/authorized_keys`
-
-7. Access the application on your host machine at: `http://localhost:20000`
+9. Access the application on your host machine at: `http://localhost:20000`
 
 ### URLs
 
