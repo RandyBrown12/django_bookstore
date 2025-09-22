@@ -23,13 +23,13 @@
       ansible.builtin.file:
         path: /var/lib/postgresql/15/main
         state: absent
-      become: yes
+      become: true
       become_user: postgres
       become_method: su
       when: not postgresql_conf.stat.exists
     - name: Initialize PostgreSQL cluster
       ansible.builtin.command: /usr/lib/postgresql/15/bin/initdb -D /var/lib/postgresql/15/main
-      become: yes
+      become: true
       become_user: postgres
       become_method: su
       args:
@@ -39,13 +39,13 @@
         path: /var/lib/postgresql/15/main/postgresql.conf
         regexp: '^#?listen_addresses\s*=\s*''localhost'''
         line: 'listen_addresses = ''*'''
-      become: yes
+      become: true
     - name: Allow port 5432 to be run
       ansible.builtin.lineinfile:
         path: /var/lib/postgresql/15/main/postgresql.conf
         regexp: '^#?port\s*=\s*5432'
         line: 'port = 5432'
-      become: yes
+      become: true
     - name: Allow connections outside of container to access it
       community.postgresql.postgresql_pg_hba:
         dest: /var/lib/postgresql/15/main/pg_hba.conf
@@ -54,10 +54,10 @@
         users: randy
         address: 0.0.0.0/0
         method: scram-sha-256
-      become: yes
+      become: true
     - name: Start up PostgreSQL cluster
       ansible.builtin.command: /usr/lib/postgresql/15/bin/pg_ctl -D /var/lib/postgresql/15/main -l /var/lib/postgresql/15/logfile start
-      become: yes
+      become: true
       become_user: postgres
       become_method: su
       args:
@@ -79,7 +79,7 @@
   tasks:
     - name: Update apt cache before installing
       ansible.builtin.apt:
-        update_cache: yes
+        update_cache: true
     - name: Install Git for ubuntu
       ansible.builtin.apt:
         name: git
@@ -130,7 +130,7 @@
         path: /home/root/django_bookstore/settings.py
         regexp: '^ALLOWED_HOSTS\s*=\s*\[\]'
         line: 'ALLOWED_HOSTS = [''*'']'
-      become: yes
+      become: true
     - name: Make Migrations from Django
       ansible.builtin.command: 
         .venv/bin/python3 manage.py migrate
